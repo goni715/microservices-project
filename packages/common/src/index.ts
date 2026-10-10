@@ -1,3 +1,1 @@
-const myName = "Osman Goni"
-
-export default myName;
+export * from './errors'
