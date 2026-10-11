@@ -10,8 +10,7 @@
       "node"
     ],
     /* Modules */
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
     /* Emit */
     "declaration": true,
     "declarationMap": true,
