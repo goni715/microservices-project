@@ -2,13 +2,14 @@
 import http from "http";
 import app from "./app";
 import dns from 'node:dns/promises'
+import envConfig from "./config/env";
 
 dns.setServers(['1.1.1.1'])
 
 
 const server = http.createServer(app);
 
-const port = 4001;
+const port = envConfig.port;
 
 async function main() {
     try {
