@@ -4,3 +4,9 @@ export interface IRegisterPayload {
     email: string;
     password: string;
 }
+
+export interface ILogin {
+    email: string;
+    password: string;
+    isRememberMe: boolean;
+}

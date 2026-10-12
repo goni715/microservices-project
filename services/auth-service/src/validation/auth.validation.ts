@@ -1,4 +1,4 @@
-import { requiredStringSchema } from "@chatapp/common";
+import { booleanSchema, requiredStringSchema } from "@chatapp/common";
 import z from "zod";
 
 export const fullNameRegex = /^[A-Za-z\s'.-]+$/;
@@ -29,5 +29,18 @@ export const registerUserValidationSchema = z.object({
         full_name: fullNameZodSchema,
         email: emailZodSchema,
         password: passwordZodSchema,
+    })
+})
+
+
+const isRememberMeZodSchema = booleanSchema('isRememberMe')
+    .optional()
+    .default(false)
+
+export const loginUserValidationSchema = z.object({
+    body: z.object({
+        email: emailZodSchema,
+        password: passwordZodSchema,
+        isRememberMe: isRememberMeZodSchema
     })
 })

@@ -5,12 +5,23 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import { globalErrorHandler, notFound } from "@chatapp/common";
 import router from "./routes/auth.routes";
+import envConfig from "./config/env";
 
 
 const app: Application = express();
 
 app.set("trust proxy", true);
-app.use(cors());
+app.use(
+    cors({
+        origin: envConfig.cors_origins
+            ? envConfig.cors_origins.split(",").map((origin) => origin.trim())
+            : [
+                "http://localhost:3000",
+                "http://localhost:3001",
+            ],
+        credentials: true,
+    }),
+);
 
 
 app.use(cookieParser());

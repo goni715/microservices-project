@@ -11,7 +11,17 @@ const envValidationSchema = z.object({
     PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4001),
     AUTH_DB_URL: requiredStringSchema('AUTH_DB_URL'),
     BCRPYT_SALT_ROUNDS: requiredStringSchema('BCRPYT_SALT_ROUNDS').transform((val) => Number(val)),
-    JWT_SECRET: requiredStringSchema('JWT_SECRET'),
+    CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS'),
+    // JWT
+    JWT_ACCESS_SECRET: requiredStringSchema('JWT_ACCESS_SECRET'),
+    JWT_REFRESH_SECRET: requiredStringSchema('JWT_REFRESH_SECRET'),
+    JWT_ACCESS_EXPIRES_IN: requiredStringSchema('JWT_ACCESS_EXPIRES_IN'),
+    JWT_REFRESH_EXPIRES_IN: requiredStringSchema('JWT_REFRESH_EXPIRES_IN'),
+    JWT_REFRESH_EXPIRES_IN_REMEMBER: requiredStringSchema('JWT_REFRESH_EXPIRES_IN_REMEMBER'),
+
+    // Refresh Token
+    REFRESH_TOKEN_COOKIE_MAX_AGE: requiredStringSchema('REFRESH_TOKEN_COOKIE_MAX_AGE'),
+    REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER: requiredStringSchema('REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER'),
 });
 
 // validate process.env against schema
@@ -40,7 +50,18 @@ const envConfig = {
     port: env.PORT,
     auth_db_url: env.AUTH_DB_URL,
     bcrypt_salt_rounds: env.BCRPYT_SALT_ROUNDS,
-    jwt_secret: env.JWT_SECRET,
+    cors_origins: env.CORS_ORIGINS,
+    jwt: {
+        jwt_access_secret: env.JWT_ACCESS_SECRET,
+        jwt_refresh_secret: env.JWT_REFRESH_SECRET,
+        jwt_access_expires_in: env.JWT_ACCESS_EXPIRES_IN,
+        jwt_refresh_expires_in: env.JWT_REFRESH_EXPIRES_IN,
+        jwt_refresh_expires_in_remember: env.JWT_REFRESH_EXPIRES_IN_REMEMBER,
+    },
+    refreshToken: {
+        refresh_token_cookie_max_age: Number(env.REFRESH_TOKEN_COOKIE_MAX_AGE),
+        refresh_token_cookie_max_age_remember: Number(env.REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER),
+    },
 };
 
 export default envConfig;
