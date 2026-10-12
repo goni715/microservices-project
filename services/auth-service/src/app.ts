@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import { globalErrorHandler, notFound } from "@chatapp/common";
+import router from "./routes/auth.routes";
 
 
 const app: Application = express();
@@ -27,10 +28,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
+//application routes
+app.use("/api/v1/auth", router);
+
+//global error-handling middleware
+app.use(globalErrorHandler);
+
 //route not found
 app.use(notFound);
 
-// global error-handling middleware
-app.use(globalErrorHandler);
 
 export default app;

@@ -10,6 +10,7 @@ const envValidationSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default('development'),
     PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4001),
     AUTH_DB_URL: requiredStringSchema('AUTH_DB_URL'),
+    BCRPYT_SALT_ROUNDS: requiredStringSchema('BCRPYT_SALT_ROUNDS').transform((val) => Number(val)),
     JWT_SECRET: requiredStringSchema('JWT_SECRET'),
 });
 
@@ -38,6 +39,7 @@ const envConfig = {
     node_env: env.NODE_ENV,
     port: env.PORT,
     auth_db_url: env.AUTH_DB_URL,
+    bcrypt_salt_rounds: env.BCRPYT_SALT_ROUNDS,
     jwt_secret: env.JWT_SECRET,
 };
 
