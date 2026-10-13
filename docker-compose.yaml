@@ -1,4 +1,25 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: chatapp-rabbitmq
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - chatapp-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+
   auth-db:
     image: mysql:8.0
     container_name: chatapp-auth-db
@@ -43,5 +64,6 @@ services:
 volumes:
   auth-db-data:
   user-db-data:
+  rabbitmq-data:
 networks:
   chatapp-network:
