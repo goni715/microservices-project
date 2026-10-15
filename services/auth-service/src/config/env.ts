@@ -12,6 +12,8 @@ const envValidationSchema = z.object({
     AUTH_DB_URL: requiredStringSchema('AUTH_DB_URL'),
     BCRPYT_SALT_ROUNDS: requiredStringSchema('BCRPYT_SALT_ROUNDS').transform((val) => Number(val)),
     CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS'),
+
+    RABBITMQ_URL: requiredStringSchema('RABBITMQ_URL'),
     // JWT
     JWT_ACCESS_SECRET: requiredStringSchema('JWT_ACCESS_SECRET'),
     JWT_REFRESH_SECRET: requiredStringSchema('JWT_REFRESH_SECRET'),
@@ -51,6 +53,7 @@ const envConfig = {
     auth_db_url: env.AUTH_DB_URL,
     bcrypt_salt_rounds: env.BCRPYT_SALT_ROUNDS,
     cors_origins: env.CORS_ORIGINS,
+    rabbitmq_url: env.RABBITMQ_URL,
     jwt: {
         jwt_access_secret: env.JWT_ACCESS_SECRET,
         jwt_refresh_secret: env.JWT_REFRESH_SECRET,
