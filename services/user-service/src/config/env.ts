@@ -10,7 +10,8 @@ const envValidationSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default('development'),
     PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4001),
     USER_DB_URL: requiredStringSchema('USER_DB_URL'),
-    CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS')
+    CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS'),
+    RABBITMQ_URL: requiredStringSchema('RABBITMQ_URL'),
 });
 
 // validate process.env against schema
@@ -38,7 +39,8 @@ const envConfig = {
     node_env: env.NODE_ENV,
     port: env.PORT,
     user_db_url: env.USER_DB_URL,
-    cors_origins: env.CORS_ORIGINS
+    cors_origins: env.CORS_ORIGINS,
+    rabbitmq_url: env.RABBITMQ_URL,
 };
 
 export default envConfig;

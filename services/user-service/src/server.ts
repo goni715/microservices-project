@@ -4,6 +4,7 @@ import app from "./app";
 import dns from 'node:dns/promises'
 import envConfig from "./config/env";
 import logger from "./utils/logger";
+import { connectRabbitMQ } from "./messaging/connectRabbitMQ";
 
 dns.setServers(['1.1.1.1'])
 
@@ -14,6 +15,7 @@ const port = envConfig.port;
 
 async function main() {
     try {
+        await connectRabbitMQ();
         server.listen(port, () => {
             logger.info({ port }, `User Service is running on http://localhost:${port}`);
         });
