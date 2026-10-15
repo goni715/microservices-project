@@ -4,6 +4,7 @@ import app from "./app";
 import dns from 'node:dns/promises'
 import envConfig from "./config/env";
 import { closeRabbitMQ, initRabbitMQ } from "./messaging/event.publisher";
+import logger from "./utils/logger";
 
 dns.setServers(['1.1.1.1'])
 
@@ -16,10 +17,10 @@ async function main() {
     try {
         await initRabbitMQ();
         server.listen(port, () => {
-            console.log(`👤👤 Auth Service is running on http://localhost:${port}`);
+            logger.info({ port }, `Auth Service is running on http://localhost:${port}`);
         });
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 }
 
@@ -27,7 +28,7 @@ main();
 
 //asynchronous code error
 process.on("unhandledRejection", (err) => {
-    console.log(`❤❤ unahandledRejection is detected , shutting down ...`, err);
+    logger.error({ err }, `unahandledRejection is detected , shutting down ...`);
     if (server) {
         server.close(() => {
             process.exit(1);
@@ -38,7 +39,7 @@ process.on("unhandledRejection", (err) => {
 
 //synchronous code error--process immediately off
 process.on("uncaughtException", (err) => {
-    console.log(`😛😛 uncaughtException is detected , shutting down ...`, err);
+    logger.error({ err }, `uncaughtException is detected , shutting down ...`);
     process.exit(1);
 });
 

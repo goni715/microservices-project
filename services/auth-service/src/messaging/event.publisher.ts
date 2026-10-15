@@ -5,6 +5,7 @@ import {
     UserRegisteredPayload,
 } from "@chatapp/common";
 import envConfig from "../config/env";
+import logger from "../utils/logger";
 
 let connection: ChannelModel | null = null;
 let channel: Channel | null = null;
@@ -26,18 +27,18 @@ export async function initRabbitMQ() {
 
         // handle connection drop and error events
         connection.on("close", () => {
-            console.warn("⚠️ RabbitMQ connection closed");
+            logger.warn("RabbitMQ connection closed");
             channel = null;
             connection = null;
         });
 
         connection.on("error", (err: Error) => {
-            console.error("❌ RabbitMQ connection error:", err);
+            logger.error({err},"RabbitMQ connection error");
         });
 
-        console.log("🐰 Connected to RabbitMQ & Publisher initialized");
+        logger.info("Connected to RabbitMQ & Publisher initialized");
     } catch (error) {
-        console.error("❌ Failed to connect to RabbitMQ:", error);
+        logger.error({error},"Failed to connect to RabbitMQ:");
         throw error; 
     }
 }
@@ -58,7 +59,7 @@ export async function publishUserRegistered(data: UserRegisteredPayload) {
         { persistent: true }
     );
 
-    console.log(`📤 Event published: ${AUTH_USER_REGISTERED_ROUTING_KEY}`);
+    logger.info(`Event published: ${AUTH_USER_REGISTERED_ROUTING_KEY}`);
 }
 
 
@@ -67,9 +68,9 @@ export async function closeRabbitMQ() {
     try {
         if (channel) await channel.close();
         if (connection) await connection.close();
-        console.log("🔌 RabbitMQ connection closed gracefully");
+        logger.info("RabbitMQ connection closed gracefully");
     } catch (error) {
-        console.error("Error closing RabbitMQ connection:", error);
+        logger.error({error},"Error closing RabbitMQ connection:");
     }
 }
 
