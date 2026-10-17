@@ -1,15 +1,22 @@
 import { Channel } from "amqplib";
-import { getRabbitMQConnection } from "./connection";
-import { AUTH_EVENT_EXCHANGE, AUTH_USER_REGISTERED_ROUTING_KEY, UserRegisteredPayload } from "@chatapp/common";
+import { getRabbitMQConnection, onRabbitMQReconnect, registerChannelCloser } from "./connection";
+import {
+    AUTH_EVENT_EXCHANGE,
+    AUTH_USER_REGISTERED_ROUTING_KEY,
+    USER_SERVICE_AUTH_EVENTS_QUEUE,
+    UserRegisteredPayload,
+} from "@chatapp/common";
 import logger from "../utils/logger";
 import db from "../db";
 import { users } from "../db/schema";
 
 let consumerChannel: Channel | null = null;
 
-const USER_REGISTERED_QUEUE = "user_service_auth_registered_queue";
+// dedicated queue according to naming convention: chatapp.user-service.auth-events
+const USER_REGISTERED_QUEUE = USER_SERVICE_AUTH_EVENTS_QUEUE;
 
 /*initialize RabbitMQ connection, exchange, and queue.*/
+
 export async function initAuthConsumer() {
     if (consumerChannel) {
         return consumerChannel;
@@ -20,6 +27,17 @@ export async function initAuthConsumer() {
         const connection = await getRabbitMQConnection();
 
         consumerChannel = await connection.createChannel();
+
+        consumerChannel.on("close", () => {
+            logger.warn("Consumer channel closed");
+            consumerChannel = null;
+        });
+
+        consumerChannel.on("error", (err) => {
+            logger.error({ err }, "Consumer channel error");
+            consumerChannel = null;
+        });
+
         await consumerChannel.assertExchange(AUTH_EVENT_EXCHANGE, "topic", { durable: true });
 
         await consumerChannel.assertQueue(USER_REGISTERED_QUEUE, { durable: true });
@@ -41,6 +59,30 @@ export async function initAuthConsumer() {
         throw error;
     }
 }
+
+// register reconnect callback to re-initialize consumer when RabbitMQ reconnects
+onRabbitMQReconnect(async () => {
+    logger.info("Re-initializing Auth Consumer after RabbitMQ reconnect...");
+    consumerChannel = null;
+    await initAuthConsumer();
+});
+
+// close RabbitMQ consumer channel during shutdown
+export async function closeConsumerChannel() {
+    if (consumerChannel) {
+        try {
+            await consumerChannel.close();
+            consumerChannel = null;
+            logger.info("Consumer channel closed gracefully");
+        } catch (error) {
+            logger.error({ error }, "Error closing consumer channel");
+        }
+    }
+}
+
+// register channel closer so closeRabbitMQ() automatically closes this channel first
+registerChannelCloser(closeConsumerChannel);
+
 
 //consume user registered event from RabbitMQ queue.
 export async function consumeUserRegistered() {
@@ -73,3 +115,4 @@ export async function consumeUserRegistered() {
 
     logger.info(`Consumer listening on queue: ${USER_REGISTERED_QUEUE}`);
 }
+

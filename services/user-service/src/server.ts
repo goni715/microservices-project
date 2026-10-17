@@ -44,8 +44,43 @@ process.on("uncaughtException", (err) => {
     process.exit(1);
 });
 
-// graceful shutdown on SIGINT (Ctrl+C)
-process.on("SIGINT", async () => {
-    await closeRabbitMQ();
-    process.exit(0);
-});
+let isShuttingDown = false;
+
+// graceful shutdown handler
+async function handleGracefulShutdown(signal: string) {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+
+    logger.info(`Received ${signal}. Shutting down gracefully...`);
+
+    // Force exit if shutdown hangs beyond 10 seconds
+    const forceExitTimeout = setTimeout(() => {
+        logger.error("Could not close connections in time, forcefully shutting down");
+        process.exit(1);
+    }, 10000);
+    forceExitTimeout.unref();
+
+    try {
+        if (server.listening) {
+            await new Promise<void>((resolve) => {
+                server.close(() => {
+                    logger.info("HTTP server closed");
+                    resolve();
+                });
+            });
+        }
+
+        // close RabbitMQ channel and connection
+        await closeRabbitMQ();
+
+        logger.info("Graceful shutdown completed successfully");
+        process.exit(0);
+    } catch (err) {
+        logger.error({ err }, "Error during graceful shutdown");
+        process.exit(1);
+    }
+}
+
+process.on("SIGINT", () => handleGracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => handleGracefulShutdown("SIGTERM"));
+
