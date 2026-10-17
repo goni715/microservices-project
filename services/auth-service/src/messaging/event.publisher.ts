@@ -1,58 +1,39 @@
-import amqp, { Channel, ChannelModel } from "amqplib";
-import {
-    AUTH_EVENT_EXCHANGE,
-    AUTH_USER_REGISTERED_ROUTING_KEY,
-    UserRegisteredPayload,
-} from "@chatapp/common";
-import envConfig from "../config/env";
-import logger from "../utils/logger";
+import { Channel } from 'amqplib';
+import { getRabbitMQConnection } from './connection';
+import { AUTH_EVENT_EXCHANGE, AUTH_USER_REGISTERED_ROUTING_KEY, UserRegisteredPayload } from '@chatapp/common';
+import logger from '../utils/logger';
 
-let connection: ChannelModel | null = null;
-let channel: Channel | null = null;
+let publisherChannel: Channel | null = null;
 
 /*initialize RabbitMQ connection and exchange.*/
-export async function initRabbitMQ() {
-    // skip initialization if already connected
-    if (channel) {
-        return;
+export async function initAuthPublisher() {
+    if (publisherChannel) {
+        return publisherChannel;
     }
 
     try {
+        // import connection file
+        const connection = await getRabbitMQConnection();
 
-        connection = await amqp.connect(envConfig.rabbitmq_url);
-        channel = await connection.createChannel();
+        publisherChannel = await connection.createChannel();
+        await publisherChannel.assertExchange(AUTH_EVENT_EXCHANGE, "topic", { durable: true });
 
-        // Assert topic exchange (durable: true ensures it survives RabbitMQ broker restarts)
-        await channel.assertExchange(AUTH_EVENT_EXCHANGE, "topic", { durable: true });
-
-        // handle connection drop and error events
-        connection.on("close", () => {
-            logger.warn("RabbitMQ connection closed");
-            channel = null;
-            connection = null;
-        });
-
-        connection.on("error", (err: Error) => {
-            logger.error({err},"RabbitMQ connection error");
-        });
-
-        logger.info("Connected to RabbitMQ & Publisher initialized");
+        logger.info("Publisher channel initialized");
+        return publisherChannel;
     } catch (error) {
-        logger.error({error},"Failed to connect to RabbitMQ:");
-        throw error; 
+        logger.error({ error }, "Failed to initialize publisher channel");
+        throw error;
     }
 }
 
-
-
 //publish user registered event to RabbitMQ exchange.
 export async function publishUserRegistered(data: UserRegisteredPayload) {
-    if (!channel) {
+    if (!publisherChannel) {
         throw new Error("RabbitMQ channel is not initialized");
     }
 
     // persistent: true ensures messages are saved to disk to prevent loss on broker restart
-    channel.publish(
+    publisherChannel.publish(
         AUTH_EVENT_EXCHANGE,
         AUTH_USER_REGISTERED_ROUTING_KEY,
         Buffer.from(JSON.stringify(data)),
@@ -63,14 +44,4 @@ export async function publishUserRegistered(data: UserRegisteredPayload) {
 }
 
 
-//close RabbitMQ channel and connection during server shutdown.
-export async function closeRabbitMQ() {
-    try {
-        if (channel) await channel.close();
-        if (connection) await connection.close();
-        logger.info("RabbitMQ connection closed gracefully");
-    } catch (error) {
-        logger.error({error},"Error closing RabbitMQ connection:");
-    }
-}
 

@@ -4,7 +4,8 @@ import app from "./app";
 import dns from 'node:dns/promises'
 import envConfig from "./config/env";
 import logger from "./utils/logger";
-import { connectRabbitMQ } from "./messaging/connectRabbitMQ";
+import { initAuthConsumer } from "./messaging/auth.consumer";
+import { closeRabbitMQ } from "./messaging/connection";
 
 dns.setServers(['1.1.1.1'])
 
@@ -15,7 +16,7 @@ const port = envConfig.port;
 
 async function main() {
     try {
-        await connectRabbitMQ();
+        await initAuthConsumer();
         server.listen(port, () => {
             logger.info({ port }, `User Service is running on http://localhost:${port}`);
         });
@@ -41,4 +42,10 @@ process.on("unhandledRejection", (err) => {
 process.on("uncaughtException", (err) => {
     logger.error({ err }, `uncaughtException is detected , shutting down ...`);
     process.exit(1);
+});
+
+// graceful shutdown on SIGINT (Ctrl+C)
+process.on("SIGINT", async () => {
+    await closeRabbitMQ();
+    process.exit(0);
 });

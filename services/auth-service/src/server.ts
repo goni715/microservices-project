@@ -3,8 +3,9 @@ import http from "http";
 import app from "./app";
 import dns from 'node:dns/promises'
 import envConfig from "./config/env";
-import { closeRabbitMQ, initRabbitMQ } from "./messaging/event.publisher";
 import logger from "./utils/logger";
+import { initAuthPublisher } from "./messaging/event.publisher";
+import { closeRabbitMQ } from "./messaging/connection";
 
 dns.setServers(['1.1.1.1'])
 
@@ -15,7 +16,7 @@ const port = envConfig.port;
 
 async function main() {
     try {
-        await initRabbitMQ();
+        await initAuthPublisher();
         server.listen(port, () => {
             logger.info({ port }, `Auth Service is running on http://localhost:${port}`);
         });

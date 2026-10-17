@@ -7,6 +7,7 @@ import { ILogin, IRegisterPayload } from "../interfaces/auth.interface";
 import { createToken, TJwtExpiresIn } from "../helpers/JwtHelper";
 import { Secret } from "jsonwebtoken";
 import envConfig from "../config/env";
+import { publishUserRegistered } from "../messaging/event.publisher";
 
 /*=============== register user ===================*/
 const registerUser = async (payload: IRegisterPayload) => {
@@ -20,14 +21,24 @@ const registerUser = async (payload: IRegisterPayload) => {
         throw new ConflictError("An account with this email already exists.");
     }
 
-    //hashing password
+    //hashing password & generate ID
     const hashedPassword = await hashPassword(password);
+    const userId = crypto.randomUUID();
 
     //insert user
     await db.insert(users).values({
+        id: userId,
         full_name,
         email,
         password: hashedPassword,
+    })
+
+    //publish user registered event
+    await publishUserRegistered({
+        id: userId,
+        email,
+        full_name,
+        created_at: new Date().toISOString()
     });
 
     return {

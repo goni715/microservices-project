@@ -5,7 +5,7 @@ import logger from "../utils/logger";
 let connection: ChannelModel | null = null;
 
 /*initialize RabbitMQ connection and exchange.*/
-export async function connectRabbitMQ(): Promise<ChannelModel> {
+export async function getRabbitMQConnection(): Promise<ChannelModel> {
     if (connection) {
         return connection;
     }
