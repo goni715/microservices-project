@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import { globalErrorHandler, notFound } from "@chatapp/common";
 import envConfig from "./config/env";
+import authRouter from "./routes/auth.routes";
 
 
 const app: Application = express();
@@ -37,6 +38,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+//application routes
+app.use("/api/v1/auth", authRouter);
 
 //global error-handling middleware
 app.use(globalErrorHandler);

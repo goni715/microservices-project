@@ -1,6 +1,6 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller";
-import validationMiddleware from "@chatapp/common/dist/middlewares/validationMiddleware";
+import { validationMiddleware } from "@chatapp/common";
 import { loginUserValidationSchema, registerUserValidationSchema } from "../validation/auth.validation";
 
 

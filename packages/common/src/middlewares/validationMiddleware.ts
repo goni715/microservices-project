@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodError, ZodType } from "zod";
 
-const validationMiddleware = (schema: ZodType<any, any, any>) => {
+export const validationMiddleware = (schema: ZodType<any, any, any>) => {
   return async (
     req: Request,
     res: Response,
@@ -56,4 +56,4 @@ const validationMiddleware = (schema: ZodType<any, any, any>) => {
   };
 };
 
-export default validationMiddleware;
+

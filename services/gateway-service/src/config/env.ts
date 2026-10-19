@@ -10,6 +10,9 @@ const envValidationSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default('development'),
     PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4001),
     CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS'),
+    AUTH_SERVICE_URL: requiredStringSchema('AUTH_SERVICE_URL'),
+    USER_SERVICE_URL: requiredStringSchema('USER_SERVICE_URL'),
+    JWT_ACCESS_SECRET: requiredStringSchema('JWT_ACCESS_SECRET'),
 });
 
 // validate process.env against schema
