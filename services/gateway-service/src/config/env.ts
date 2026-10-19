@@ -13,6 +13,7 @@ const envValidationSchema = z.object({
     AUTH_SERVICE_URL: requiredStringSchema('AUTH_SERVICE_URL'),
     USER_SERVICE_URL: requiredStringSchema('USER_SERVICE_URL'),
     JWT_ACCESS_SECRET: requiredStringSchema('JWT_ACCESS_SECRET'),
+    INTERNAL_API_TOKEN: requiredStringSchema('INTERNAL_API_TOKEN')
 });
 
 // validate process.env against schema
@@ -40,6 +41,10 @@ const envConfig = {
     node_env: env.NODE_ENV,
     port: env.PORT,
     cors_origins: env.CORS_ORIGINS,
+    auth_service_url: env.AUTH_SERVICE_URL,
+    user_service_url: env.USER_SERVICE_URL,
+    jwt_access_secret: env.JWT_ACCESS_SECRET,
+    internal_api_token: env.INTERNAL_API_TOKEN
 };
 
 export default envConfig;

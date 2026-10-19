@@ -2,7 +2,7 @@ import { asyncHandler } from "@chatapp/common";
 import AuthProxyService from "../services/auth.proxy.service";
 
 const registerUser = asyncHandler(async (req, res) => {
-    const response = await AuthProxyService.registerUser();
+    const response = await AuthProxyService.registerUser(req.body);
     res.status(201).json(response);
 });
 
