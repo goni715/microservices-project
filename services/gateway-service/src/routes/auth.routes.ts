@@ -1,7 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller";
 import { validationMiddleware } from "@chatapp/common";
-import { registerUserValidationSchema } from "../validation/auth.validation";
+import { loginUserValidationSchema, registerUserValidationSchema } from "../validation/auth.validation";
 
 
 const authRouter = express.Router();
@@ -12,6 +12,10 @@ authRouter.post(
     AuthController.registerUser,
 );
 
-
+authRouter.post(
+    "/login-user",
+    validationMiddleware(loginUserValidationSchema),
+    AuthController.loginUser,
+);
 
 export default authRouter;
