@@ -6,6 +6,7 @@ import { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import envConfig from "./config/env";
+import router from "./routes/user.routes";
 
 
 const app: Application = express();
@@ -38,6 +39,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+//application routes
+app.use("/api/v1/user", router);
 
 //global error-handling middleware
 app.use(globalErrorHandler);
