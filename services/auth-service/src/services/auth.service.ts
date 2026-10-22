@@ -8,6 +8,7 @@ import { createToken, TJwtExpiresIn } from "../helpers/JwtHelper";
 import { Secret } from "jsonwebtoken";
 import envConfig from "../config/env";
 import { publishUserRegistered } from "../messaging/event.publisher";
+import crypto from 'crypto';
 
 /*=============== register user ===================*/
 const registerUser = async (payload: IRegisterPayload) => {
@@ -64,6 +65,13 @@ const loginUser = async (payload: ILogin) => {
     if (!isPasswordMatch) {
         throw new UnprocessableError("The password you've entered is incorrect.");
     }
+
+     //generate session id
+    const sessionId = crypto.randomUUID();
+
+    const refreshTokenTTLSeconds = isRememberMe
+        ? envConfig.refreshToken.refresh_token_ttl_remember_seconds
+        : envConfig.refreshToken.refresh_token_ttl_seconds;
 
     //create refreshToken
     const refreshToken = createToken(

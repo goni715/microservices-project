@@ -6,6 +6,7 @@ import envConfig from "./config/env";
 import logger from "./utils/logger";
 import { initAuthPublisher } from "./messaging/event.publisher";
 import { closeRabbitMQ } from "./messaging/connection";
+import { connectRedis } from "@chatapp/common";
 
 dns.setServers(['1.1.1.1'])
 
@@ -16,6 +17,7 @@ const port = envConfig.port;
 
 async function main() {
     try {
+        await connectRedis(envConfig.redis_url);
         await initAuthPublisher();
         server.listen(port, () => {
             logger.info({ port }, `Auth Service is running on http://localhost:${port}`);
@@ -83,4 +85,4 @@ async function handleGracefulShutdown(signal: string) {
 
 process.on("SIGINT", () => handleGracefulShutdown("SIGINT"));
 process.on("SIGTERM", () => handleGracefulShutdown("SIGTERM"));
-
+

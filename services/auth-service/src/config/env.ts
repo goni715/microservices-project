@@ -11,9 +11,11 @@ const envValidationSchema = z.object({
     PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4001),
     AUTH_DB_URL: requiredStringSchema('AUTH_DB_URL'),
     BCRPYT_SALT_ROUNDS: requiredStringSchema('BCRPYT_SALT_ROUNDS').transform((val) => Number(val)),
+    MAX_SESSIONS: requiredStringSchema('MAX_SESSIONS').transform((val) => Number(val)).default(5),
     CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS'),
 
     RABBITMQ_URL: requiredStringSchema('RABBITMQ_URL'),
+    REDIS_URL: requiredStringSchema('REDIS_URL'),
     // JWT
     JWT_ACCESS_SECRET: requiredStringSchema('JWT_ACCESS_SECRET'),
     JWT_REFRESH_SECRET: requiredStringSchema('JWT_REFRESH_SECRET'),
@@ -24,6 +26,9 @@ const envValidationSchema = z.object({
     // Refresh Token
     REFRESH_TOKEN_COOKIE_MAX_AGE: requiredStringSchema('REFRESH_TOKEN_COOKIE_MAX_AGE'),
     REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER: requiredStringSchema('REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER'),
+
+    REFRESH_TOKEN_TTL_SECONDS: requiredStringSchema('REFRESH_TOKEN_TTL_SECONDS').transform((val) => Number(val)),
+    REFRESH_TOKEN_TTL_REMEMBER_SECONDS: requiredStringSchema('REFRESH_TOKEN_TTL_REMEMBER_SECONDS').transform((val) => Number(val)),
 });
 
 // validate process.env against schema
@@ -52,8 +57,10 @@ const envConfig = {
     port: env.PORT,
     auth_db_url: env.AUTH_DB_URL,
     bcrypt_salt_rounds: env.BCRPYT_SALT_ROUNDS,
+    max_sessions: env.MAX_SESSIONS,
     cors_origins: env.CORS_ORIGINS,
     rabbitmq_url: env.RABBITMQ_URL,
+    redis_url: env.REDIS_URL,
     jwt: {
         jwt_access_secret: env.JWT_ACCESS_SECRET,
         jwt_refresh_secret: env.JWT_REFRESH_SECRET,
@@ -64,6 +71,8 @@ const envConfig = {
     refreshToken: {
         refresh_token_cookie_max_age: Number(env.REFRESH_TOKEN_COOKIE_MAX_AGE),
         refresh_token_cookie_max_age_remember: Number(env.REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER),
+        refresh_token_ttl_seconds: Number(env.REFRESH_TOKEN_TTL_SECONDS),
+        refresh_token_ttl_remember_seconds: Number(env.REFRESH_TOKEN_TTL_REMEMBER_SECONDS),
     },
 };
 
