@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
 import { users } from "../db/schema";
-import { ConflictError, NotFoundError, UnprocessableError } from "@chatapp/common";
+import { ConflictError, makeHash, NotFoundError, UnprocessableError } from "@chatapp/common";
 import { checkPassword, hashPassword } from "../helpers/PasswordHelper";
 import { ILogin, IRegisterPayload } from "../interfaces/auth.interface";
 import { createToken, TJwtExpiresIn } from "../helpers/JwtHelper";
@@ -9,6 +9,7 @@ import { Secret } from "jsonwebtoken";
 import envConfig from "../config/env";
 import { publishUserRegistered } from "../messaging/event.publisher";
 import crypto from 'crypto';
+import sessionHelper from "../helpers/SessionHelper";
 
 /*=============== register user ===================*/
 const registerUser = async (payload: IRegisterPayload) => {
@@ -66,7 +67,7 @@ const loginUser = async (payload: ILogin) => {
         throw new UnprocessableError("The password you've entered is incorrect.");
     }
 
-     //generate session id
+    //generate session id
     const sessionId = crypto.randomUUID();
 
     const refreshTokenTTLSeconds = isRememberMe
@@ -76,8 +77,9 @@ const loginUser = async (payload: ILogin) => {
     //create refreshToken
     const refreshToken = createToken(
         {
-            userId: String(exisitingUser.id),
-            email
+            user_id: String(exisitingUser.id),
+            email,
+            session_id: sessionId
         },
         envConfig.jwt.jwt_refresh_secret as Secret,
         isRememberMe
@@ -85,16 +87,39 @@ const loginUser = async (payload: ILogin) => {
             : (envConfig.jwt.jwt_refresh_expires_in as TJwtExpiresIn),
     );
 
+
+    // check session limit
+    const activeSessionKeys = await sessionHelper.getUserActiveSessionKeys(String(exisitingUser.id));
+
+    // delete all old sessions if more than max_sessions 
+    if (activeSessionKeys.length >= envConfig.max_sessions) {
+        await sessionHelper.deleteAllSessions(String(exisitingUser.id));
+    }
+
+    //generate refreshTokenHash
+    const refreshTokenHash = makeHash(refreshToken);
+
+    await sessionHelper.createSession(
+        {
+            user_id: String(exisitingUser.id),
+            session_id: sessionId,
+            refresh_token_hash: refreshTokenHash,
+            revoked: false,
+            created_at: new Date().toISOString(),
+        },
+        refreshTokenTTLSeconds
+    );
+
     //create accessToken
     const accessToken = createToken(
         {
-            userId: String(exisitingUser.id),
-            email
+            user_id: String(exisitingUser.id),
+            email,
+            session_id: sessionId
         },
         envConfig.jwt.jwt_access_secret as Secret,
         envConfig.jwt.jwt_access_expires_in as TJwtExpiresIn,
     );
-
 
     return {
         accessToken,

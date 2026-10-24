@@ -3,8 +3,9 @@ import jwt, { JwtPayload, Secret, SignOptions } from "jsonwebtoken";
 export type TJwtExpiresIn = number | `${number}${"s" | "m" | "h" | "d"}`;
 
 type TJwtPayload = {
-    userId: string;
+    user_id: string;
     email: string;
+    session_id: string;
 };
 
 class JwtHelper {

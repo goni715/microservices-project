@@ -15,7 +15,6 @@ export interface ISession {
     session_id: string;
     user_id: string;
     refresh_token_hash: string;
-    ip: string;
     revoked: boolean;
-    created_at: Date;
+    created_at: string;
 }
