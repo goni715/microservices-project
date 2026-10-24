@@ -10,3 +10,11 @@ export interface ILogin {
     password: string;
     isRememberMe: boolean;
 }
+
+export interface ISession {
+    session_id: string;
+    user_id: string;
+    refresh_token_hash: string;
+    revoked: boolean;
+    created_at: string;
+}

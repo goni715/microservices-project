@@ -13,7 +13,8 @@ const envValidationSchema = z.object({
     AUTH_SERVICE_URL: requiredStringSchema('AUTH_SERVICE_URL'),
     USER_SERVICE_URL: requiredStringSchema('USER_SERVICE_URL'),
     JWT_ACCESS_SECRET: requiredStringSchema('JWT_ACCESS_SECRET'),
-    INTERNAL_API_TOKEN: requiredStringSchema('INTERNAL_API_TOKEN')
+    INTERNAL_API_TOKEN: requiredStringSchema('INTERNAL_API_TOKEN'),
+    REDIS_URL: requiredStringSchema('REDIS_URL'),
 });
 
 // validate process.env against schema
@@ -44,7 +45,8 @@ const envConfig = {
     auth_service_url: env.AUTH_SERVICE_URL,
     user_service_url: env.USER_SERVICE_URL,
     jwt_access_secret: env.JWT_ACCESS_SECRET,
-    internal_api_token: env.INTERNAL_API_TOKEN
+    internal_api_token: env.INTERNAL_API_TOKEN,
+    redis_url: env.REDIS_URL,
 };
 
 export default envConfig;

@@ -4,6 +4,7 @@ import app from "./app";
 import dns from 'node:dns/promises'
 import envConfig from "./config/env";
 import logger from "./utils/logger";
+import { connectRedis } from "@chatapp/common";
 
 dns.setServers(['1.1.1.1'])
 
@@ -14,6 +15,7 @@ const port = envConfig.port;
 
 async function main() {
     try {
+        await connectRedis(envConfig.redis_url);
         server.listen(port, () => {
             logger.info({ port }, `Gateway Service is running on http://localhost:${port}`);
         });
