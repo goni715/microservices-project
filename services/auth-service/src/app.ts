@@ -42,11 +42,11 @@ app.use(bodyParser.json());
 //application routes
 app.use("/api/v1/auth", router);
 
-//global error-handling middleware
-app.use(globalErrorHandler);
-
 //route not found
 app.use(notFound);
+
+//global error-handling middleware
+app.use(globalErrorHandler);
 
 
 export default app;

@@ -44,11 +44,12 @@ app.use(bodyParser.json());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 
+//route not found
+app.use(notFound);
+
 //global error-handling middleware
 app.use(globalErrorHandler);
 
-//route not found
-app.use(notFound);
 
 
 export default app;

@@ -21,4 +21,10 @@ authRouter.post(
     AuthController.logout,
 );
 
+authRouter.get(
+    "/all-sessions",
+    authMiddleware(),
+    AuthController.getAllSessions,
+);
+
 export default authRouter;

@@ -15,12 +15,21 @@ export const globalErrorHandler: ErrorRequestHandler = (err, _req, res, _next) =
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
 
-    res.status(statusCode).json({
+
+   //error response payload
+    const responsePayload: Record<string, any> = {
         success: false,
         message,
-        error: {
-            message
-        }
-    });
+    };
+    if (err.errors) {
+        responsePayload.errors = err.errors;
+    } else if (err.error) {
+        responsePayload.error = err.error;
+    } else {
+        responsePayload.error = {
+            message,
+        };
+    }
+    res.status(statusCode).json(responsePayload);
 }
 

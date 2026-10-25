@@ -23,5 +23,10 @@ router.post(
     AuthController.logout,
 );
 
+router.post(
+    "/sessions",
+    AuthController.getAllSessions,
+);
+
 
 export default router;

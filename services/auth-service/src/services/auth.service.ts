@@ -135,10 +135,16 @@ const logout = async (userId: string, sessionId: string) => {
     return null;
 }
 
+/*=============== get all sessions ===================*/
+const getAllSessions = async (userId: string) => {
+    return "get all session service"
+}
+
 const AuthService = {
     registerUser,
     loginUser,
-    logout
+    logout,
+    getAllSessions
 }
 
 export default AuthService;

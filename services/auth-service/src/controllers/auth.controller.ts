@@ -5,7 +5,7 @@ import envConfig from "../config/env";
 
 const registerUser = asyncHandler(async (req, res) => {
     const result = await AuthService.registerUser(req.body);
-    res.status(200).json({
+    res.status(201).json({
         success: true,
         message: "User is registered successfully",
         data: result,
@@ -44,7 +44,15 @@ const logout = asyncHandler(async (req, res) => {
     const userId = req.headers['x-user-id'];
     const sessionId = req.headers['x-session-id'];
     const result = await AuthService.logout(userId as string, sessionId as string);
-    
+
+    //clear refresh token cookie
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: envConfig.node_env === "production",
+        sameSite: envConfig.node_env === "production" ? "none" : "lax", // strict: Prevents CSRF attacks
+        path: "/",
+    });
+
     res.status(200).json({
         success: true,
         message: "Logout successfull",
@@ -52,10 +60,24 @@ const logout = asyncHandler(async (req, res) => {
     });
 })
 
+
+const getAllSessions = asyncHandler(async (req, res) => {
+    const userId = req.headers['x-user-id'];
+    const result = await AuthService.getAllSessions(userId as string);
+
+    res.status(200).json({
+        success: true,
+        message: "Sessions are retrieved successfully",
+        data: result,
+    });
+})
+
+
 const AuthController = {
     registerUser,
     loginUser,
-    logout
+    logout,
+    getAllSessions,
 }
 
 export default AuthController;

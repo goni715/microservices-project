@@ -16,11 +16,17 @@ const logout = asyncHandler(async (req, res) => {
     res.status(200).json(response);
 });
 
+const getAllSessions = asyncHandler(async (req, res) => {
+    const response = await AuthProxyService.getAllSessions(req.user);
+    res.status(200).json(response);
+});
+
 
 const AuthController = {
     registerUser,
     loginUser,
-    logout
+    logout,
+    getAllSessions
 }
 
 export default AuthController;
