@@ -129,9 +129,16 @@ const loginUser = async (payload: ILogin) => {
     }
 }
 
+/*=============== logout user ===================*/
+const logout = async (userId: string, sessionId: string) => {
+    await sessionHelper.deleteSession(userId, sessionId);
+    return null;
+}
+
 const AuthService = {
     registerUser,
-    loginUser
+    loginUser,
+    logout
 }
 
 export default AuthService;

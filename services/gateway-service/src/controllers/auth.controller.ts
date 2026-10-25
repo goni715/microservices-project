@@ -11,12 +11,16 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(200).json(response);
 });
 
-
+const logout = asyncHandler(async (req, res) => {
+    const response = await AuthProxyService.logout(req.user);
+    res.status(200).json(response);
+});
 
 
 const AuthController = {
     registerUser,
-    loginUser
+    loginUser,
+    logout
 }
 
 export default AuthController;

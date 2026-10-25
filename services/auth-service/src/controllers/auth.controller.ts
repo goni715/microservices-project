@@ -39,9 +39,23 @@ const loginUser = asyncHandler(async (req, res) => {
     });
 });
 
+
+const logout = asyncHandler(async (req, res) => {
+    const userId = req.headers['x-user-id'];
+    const sessionId = req.headers['x-session-id'];
+    const result = await AuthService.logout(userId as string, sessionId as string);
+    
+    res.status(200).json({
+        success: true,
+        message: "Logout successfull",
+        data: result,
+    });
+})
+
 const AuthController = {
     registerUser,
-    loginUser
+    loginUser,
+    logout
 }
 
 export default AuthController;
