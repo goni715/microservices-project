@@ -27,8 +27,8 @@ const envValidationSchema = z.object({
     REFRESH_TOKEN_COOKIE_MAX_AGE: requiredStringSchema('REFRESH_TOKEN_COOKIE_MAX_AGE'),
     REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER: requiredStringSchema('REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER'),
 
-    REFRESH_TOKEN_TTL_SECONDS: requiredStringSchema('REFRESH_TOKEN_TTL_SECONDS').transform((val) => Number(val)),
-    REFRESH_TOKEN_TTL_REMEMBER_SECONDS: requiredStringSchema('REFRESH_TOKEN_TTL_REMEMBER_SECONDS').transform((val) => Number(val)),
+    SESSION_TTL_SECONDS: requiredStringSchema('SESSION_TTL_SECONDS').transform((val) => Number(val)),
+    SESSION_TTL_REMEMBER_SECONDS: requiredStringSchema('SESSION_TTL_REMEMBER_SECONDS').transform((val) => Number(val)),
 });
 
 // validate process.env against schema
@@ -71,9 +71,11 @@ const envConfig = {
     refreshToken: {
         refresh_token_cookie_max_age: Number(env.REFRESH_TOKEN_COOKIE_MAX_AGE),
         refresh_token_cookie_max_age_remember: Number(env.REFRESH_TOKEN_COOKIE_MAX_AGE_REMEMBER),
-        refresh_token_ttl_seconds: Number(env.REFRESH_TOKEN_TTL_SECONDS),
-        refresh_token_ttl_remember_seconds: Number(env.REFRESH_TOKEN_TTL_REMEMBER_SECONDS),
     },
+    session: {
+        session_ttl_seconds: Number(env.SESSION_TTL_SECONDS),
+        session_ttl_remember_seconds: Number(env.SESSION_TTL_REMEMBER_SECONDS),
+    }
 };
 
 export default envConfig;

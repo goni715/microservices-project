@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Secret } from "jsonwebtoken";
-import { asyncHandler, ForbiddenError, UnauthorizedError } from "@chatapp/common";
+import { asyncHandler, UnauthorizedError } from "@chatapp/common";
 import envConfig from "../config/env";
 import { verifyToken } from "../helpers/JwtHelper";
 import sessionHelper from "../helpers/SessionHelper";
@@ -10,8 +10,8 @@ export type TUserRole = "user" | "super_admin";
 export interface IAuthUser {
     userId: string;
     sessionId: string;
-    email?: string;
-    role: TUserRole;
+    email: string;
+    role?: TUserRole;
 }
 
 declare global {
@@ -27,19 +27,18 @@ const authMiddleware = (...roles: TUserRole[]) =>
         const authHeader = req.headers.authorization;
 
         if (!authHeader) {
-            throw new UnauthorizedError("You are not authorized. Authorization header missing.");
+            throw new UnauthorizedError("You are not authorized.");
         }
 
-        // Bearer prefix check & extract token
-        let token: string = authHeader;
-        if (authHeader.startsWith("Bearer ")) {
-            token = authHeader.split(" ")[1] ?? "";
+        // "Bearer " prefix check & extract token safely
+        if (!authHeader.startsWith("Bearer ")) {
+            throw new UnauthorizedError("You are not authorized.");
         }
 
-        token = token.trim();
+        const token = authHeader.replace(/^Bearer\s+/i, "").trim();
 
         if (!token) {
-            throw new UnauthorizedError("You are not authorized. Authentication token missing.");
+            throw new UnauthorizedError("You are not authorized.");
         }
 
         // Verify token
@@ -47,76 +46,46 @@ const authMiddleware = (...roles: TUserRole[]) =>
         try {
             decoded = verifyToken(token, envConfig.jwt_access_secret as Secret);
         } catch {
-            throw new UnauthorizedError(
-                "You are not authorized. Invalid or expired authentication token.",
-            );
+            throw new UnauthorizedError("You are not authorized.");
         }
 
-        if (!decoded || typeof decoded !== "object") {
-            throw new UnauthorizedError("You are not authorized. Invalid token payload.");
-        }
-
-        // Extract user and session info (support snake_case from auth-service and camelCase)
-        const userId = (decoded.user_id || decoded.userId || decoded.id || decoded.sub) as string;
-        const sessionId = (decoded.session_id || decoded.sessionId) as string;
-        const email = decoded.email as string | undefined;
-        const role = (decoded.role || "user") as TUserRole;
+        // extract user info
+        const userId = decoded?.userId as string;
+        const sessionId = decoded?.sessionId as string;
+        const email = decoded?.email as string;
+        //const role = decoded.role;
 
         if (!userId || !sessionId) {
             throw new UnauthorizedError(
-                "You are not authorized. Incomplete token payload.",
+                "You are not authorized.",
             );
         }
 
-        // Check session in Redis
+        // check session in Redis
         const session = await sessionHelper.getSingleSession(userId, sessionId);
 
         if (!session) {
             throw new UnauthorizedError(
-                "You are not authorized. Session expired. Please login again.",
+                "You are not authorized. Session expired.",
             );
         }
 
-        if (session.revoked) {
-            throw new UnauthorizedError(
-                "You are not authorized. Session has been revoked. Please login again.",
-            );
-        }
+        // check user role
+        // if (roles.length > 0 && !roles.includes(role)) {
+        //     throw new UnauthorizedError("You are not authorized.");
+        // }
 
-        // Verify user ownership
-        if (session.user_id && String(session.user_id) !== String(userId)) {
-            throw new UnauthorizedError(
-                "You are not authorized. Invalid session.",
-            );
-        }
-
-        // Check user role
-        if (roles.length > 0 && !roles.includes(role)) {
-            throw new ForbiddenError(
-                `You do not have permission to access this resource. Please provide ${roles
-                    .map((r) => `'${r}'`)
-                    .join(" or ")} token.`,
-            );
-        }
-
-        // Set standard headers for forwarding to downstream microservices
+        // set standard headers for forwarding to downstream microservices
         req.headers["x-user-id"] = userId;
         req.headers["x-session-id"] = sessionId;
-        if (email) req.headers["x-user-email"] = email;
-        req.headers["x-user-role"] = role;
+        req.headers["x-user-email"] = email;
+        //req.headers["x-user-role"] = role;
 
-        // Maintain existing header keys for compatibility
-        req.headers.userId = userId;
-        req.headers.sessionId = sessionId;
-        if (email) req.headers.email = email;
-        req.headers.role = role;
-
-        // Set req.user for internal handler usage
+        // set req.user for internal handler usage
         req.user = {
-            userId,
+            userId: userId,
             sessionId,
             email,
-            role,
         };
 
         next();

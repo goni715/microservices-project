@@ -12,9 +12,9 @@ export interface ILogin {
 }
 
 export interface ISession {
-    session_id: string;
-    user_id: string;
-    refresh_token_hash: string;
+    sessionId: string;
+    userId: string;
+    refreshTokenHash: string;
     revoked: boolean;
-    created_at: string;
+    createdAt: string;
 }

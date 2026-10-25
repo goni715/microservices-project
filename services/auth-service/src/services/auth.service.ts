@@ -70,16 +70,16 @@ const loginUser = async (payload: ILogin) => {
     //generate session id
     const sessionId = crypto.randomUUID();
 
-    const refreshTokenTTLSeconds = isRememberMe
-        ? envConfig.refreshToken.refresh_token_ttl_remember_seconds
-        : envConfig.refreshToken.refresh_token_ttl_seconds;
+    const sessionTTLSeconds = isRememberMe
+        ? envConfig.session.session_ttl_remember_seconds
+        : envConfig.session.session_ttl_seconds;
 
     //create refreshToken
     const refreshToken = createToken(
         {
-            user_id: String(exisitingUser.id),
+            userId: String(exisitingUser.id),
             email,
-            session_id: sessionId
+            sessionId
         },
         envConfig.jwt.jwt_refresh_secret as Secret,
         isRememberMe
@@ -101,21 +101,21 @@ const loginUser = async (payload: ILogin) => {
 
     await sessionHelper.createSession(
         {
-            user_id: String(exisitingUser.id),
-            session_id: sessionId,
-            refresh_token_hash: refreshTokenHash,
+            userId: String(exisitingUser.id),
+            sessionId,
+            refreshTokenHash,
             revoked: false,
-            created_at: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
         },
-        refreshTokenTTLSeconds
+        sessionTTLSeconds
     );
 
     //create accessToken
     const accessToken = createToken(
         {
-            user_id: String(exisitingUser.id),
+            userId: String(exisitingUser.id),
             email,
-            session_id: sessionId
+            sessionId
         },
         envConfig.jwt.jwt_access_secret as Secret,
         envConfig.jwt.jwt_access_expires_in as TJwtExpiresIn,

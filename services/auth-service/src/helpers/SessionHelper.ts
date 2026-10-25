@@ -8,7 +8,7 @@ class SessionHelper {
         expiresInSeconds: number,
     ): Promise<void> {
         //generate key
-        const key = `session:${session.user_id}:${session.session_id}`;
+        const key = `session:${session.userId}:${session.sessionId}`;
         const value = JSON.stringify(session);
 
         // store in redis
