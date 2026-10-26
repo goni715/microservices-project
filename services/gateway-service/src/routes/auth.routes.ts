@@ -21,6 +21,12 @@ authRouter.post(
     AuthController.logout,
 );
 
+authRouter.post(
+    "/logout-all",
+    authMiddleware(),
+    AuthController.logoutFromAll,
+);
+
 authRouter.get(
     "/all-sessions",
     authMiddleware(),

@@ -135,6 +135,12 @@ const logout = async (userId: string, sessionId: string) => {
     return null;
 }
 
+/*=============== logout from all devices ===================*/
+const logoutFromAll = async (userId: string) => {
+    await sessionHelper.deleteAllSessions(userId);
+    return null;
+}
+
 /*=============== get all sessions ===================*/
 const getAllSessions = async (userId: string, currentSessionId: string) => {
     const sessions = await sessionHelper.getAllSessions(userId, currentSessionId);
@@ -156,6 +162,7 @@ const AuthService = {
     registerUser,
     loginUser,
     logout,
+    logoutFromAll,
     getAllSessions,
     revokeSession
 }

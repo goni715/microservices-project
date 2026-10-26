@@ -39,7 +39,6 @@ const loginUser = asyncHandler(async (req, res) => {
     });
 });
 
-
 const logout = asyncHandler(async (req, res) => {
     const userId = req.headers['x-user-id'];
     const sessionId = req.headers['x-session-id'];
@@ -56,6 +55,26 @@ const logout = asyncHandler(async (req, res) => {
     res.status(200).json({
         success: true,
         message: "Logout successfull",
+        data: result,
+    });
+})
+
+
+const logoutFromAll = asyncHandler(async (req, res) => {
+    const userId = req.headers['x-user-id'];
+    const result = await AuthService.logoutFromAll(userId as string);
+
+    //clear refresh token cookie
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: envConfig.node_env === "production",
+        sameSite: envConfig.node_env === "production" ? "none" : "lax", // strict: Prevents CSRF attacks
+        path: "/",
+    });
+
+    res.status(200).json({
+        success: true,
+        message: "Logout from all devices successfully",
         data: result,
     });
 })
@@ -90,6 +109,7 @@ const AuthController = {
     registerUser,
     loginUser,
     logout,
+    logoutFromAll,
     getAllSessions,
     revokeSession
 }

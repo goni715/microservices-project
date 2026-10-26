@@ -23,6 +23,11 @@ router.post(
     AuthController.logout,
 );
 
+router.post(
+    "/logout-all",
+    AuthController.logoutFromAll,
+);
+
 router.get(
     "/all-sessions",
     AuthController.getAllSessions,

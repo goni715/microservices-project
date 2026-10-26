@@ -37,6 +37,16 @@ const logout = async (user?: IAuthUser) => {
     }
 };
 
+/*=========== logout from all devices ============*/
+const logoutFromAll = async (user?: IAuthUser) => {
+    try {
+        const response = await client.post('/logout-all', {}, getProxyHeaders(user));
+        return response.data;
+    } catch (error: any) {
+        throw error;
+    }
+};
+
 /*=========== get all sessions ============*/
 const getAllSessions = async (user?: IAuthUser) => {
     try {
@@ -62,6 +72,7 @@ const AuthProxyService = {
     registerUser,
     loginUser,
     logout,
+    logoutFromAll,
     getAllSessions,
     revokeSession
 };
