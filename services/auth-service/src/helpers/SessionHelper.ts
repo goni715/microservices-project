@@ -34,6 +34,26 @@ class SessionHelper {
         return await redisClient.keys(`session:${userId}:*`);
     };
 
+    /*get all user sessions from Redis*/
+    async getAllSessions(userId: string) {
+        const keys: string[] = await this.getUserActiveSessionKeys(userId);
+        if (!keys || keys.length === 0) return [];
+
+        // retrieve all session values in a single network round-trip
+        const rawSessions = await redisClient.mGet(keys);
+
+        return rawSessions
+            .filter((data): data is string => Boolean(data)) // Filter out null/undefined values
+            .map((data) => {
+                const session: ISession = JSON.parse(data);
+                return {
+                    sessionId: session.sessionId,
+                    revoked: session.revoked,
+                    createdAt: session.createdAt,
+                };
+            });
+    };
+
     /*delete a single session*/
     async deleteSession(userId: string, sessionId: string) {
         const key = `session:${userId}:${sessionId}`;

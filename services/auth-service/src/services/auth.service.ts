@@ -137,14 +137,23 @@ const logout = async (userId: string, sessionId: string) => {
 
 /*=============== get all sessions ===================*/
 const getAllSessions = async (userId: string) => {
-    return "get all session service"
+    const sessions = await sessionHelper.getAllSessions(userId);
+    return sessions;
+}
+
+const revokeSession = async (userId: string, sessionId: string) => {
+    return {
+        userId,
+        sessionId,
+    };
 }
 
 const AuthService = {
     registerUser,
     loginUser,
     logout,
-    getAllSessions
+    getAllSessions,
+    revokeSession
 }
 
 export default AuthService;

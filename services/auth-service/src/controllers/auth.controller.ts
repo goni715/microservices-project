@@ -72,12 +72,25 @@ const getAllSessions = asyncHandler(async (req, res) => {
     });
 })
 
+const revokeSession = asyncHandler(async (req, res) => {
+    const userId = req.headers['x-user-id'];
+    const { sessionId } = req.params;
+    const result = await AuthService.revokeSession(userId as string, sessionId as string);
+
+    res.status(200).json({
+        success: true,
+        message: "Session is revoked successfully",
+        data: result,
+    });
+})
+
 
 const AuthController = {
     registerUser,
     loginUser,
     logout,
     getAllSessions,
+    revokeSession
 }
 
 export default AuthController;

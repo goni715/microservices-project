@@ -40,7 +40,7 @@ const logout = async (user?: IAuthUser) => {
 /*=========== get all sessions ============*/
 const getAllSessions = async (user?: IAuthUser) => {
     try {
-        const response = await client.post('/all-sessions', {}, getProxyHeaders(user));
+        const response = await client.get('/all-sessions', getProxyHeaders(user));
         return response.data;
     } catch (error: any) {
         throw error;

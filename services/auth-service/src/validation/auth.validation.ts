@@ -1,4 +1,4 @@
-import { booleanSchema, requiredStringSchema } from "@chatapp/common";
+import { booleanSchema, requiredStringSchema, uuidSchema } from "@chatapp/common";
 import z from "zod";
 
 export const fullNameRegex = /^[A-Za-z\s'.-]+$/;
@@ -44,3 +44,9 @@ export const loginUserValidationSchema = z.object({
         isRememberMe: isRememberMeZodSchema
     })
 })
+
+export const revokeSessionValidationSchema = z.object({
+    params: z.object({
+        sessionId: uuidSchema('sessionId')
+    }),
+});
