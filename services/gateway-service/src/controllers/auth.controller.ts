@@ -21,12 +21,19 @@ const getAllSessions = asyncHandler(async (req, res) => {
     res.status(200).json(response);
 });
 
+const revokeSession = asyncHandler(async (req, res) => {
+    const { sessionId } = req.params;
+    const response = await AuthProxyService.revokeSession(sessionId as string, req.user);
+    res.status(200).json(response);
+});
+
 
 const AuthController = {
     registerUser,
     loginUser,
     logout,
-    getAllSessions
+    getAllSessions,
+    revokeSession
 }
 
 export default AuthController;

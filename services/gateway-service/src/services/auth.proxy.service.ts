@@ -47,12 +47,23 @@ const getAllSessions = async (user?: IAuthUser) => {
     }
 }
 
+/*=========== revoke session ============*/
+const revokeSession = async (sessionId: string, user?: IAuthUser) => {
+    try {
+        const response = await client.patch(`/revoke-session/${sessionId}`, {}, getProxyHeaders(user));
+        return response.data;
+    } catch (error: any) {
+        throw error;
+    }
+}
+
 
 const AuthProxyService = {
     registerUser,
     loginUser,
     logout,
-    getAllSessions
+    getAllSessions,
+    revokeSession
 };
 
 export default AuthProxyService;

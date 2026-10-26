@@ -27,4 +27,10 @@ authRouter.get(
     AuthController.getAllSessions,
 );
 
+authRouter.patch(
+    "/revoke-session/:sessionId",
+    authMiddleware(),
+    AuthController.revokeSession,
+);
+
 export default authRouter;

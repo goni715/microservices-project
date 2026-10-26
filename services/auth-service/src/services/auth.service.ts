@@ -136,16 +136,20 @@ const logout = async (userId: string, sessionId: string) => {
 }
 
 /*=============== get all sessions ===================*/
-const getAllSessions = async (userId: string) => {
-    const sessions = await sessionHelper.getAllSessions(userId);
+const getAllSessions = async (userId: string, currentSessionId: string) => {
+    const sessions = await sessionHelper.getAllSessions(userId, currentSessionId);
     return sessions;
 }
 
+/*=============== revoke session ===================*/
 const revokeSession = async (userId: string, sessionId: string) => {
-    return {
-        userId,
-        sessionId,
-    };
+    const session = await sessionHelper.getSingleSession(userId, sessionId);
+    if (!session) {
+        throw new NotFoundError("Session not found");
+    }
+
+    await sessionHelper.deleteSession(userId, sessionId);
+    return null;
 }
 
 const AuthService = {

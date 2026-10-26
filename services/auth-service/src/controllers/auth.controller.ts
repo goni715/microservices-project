@@ -63,7 +63,8 @@ const logout = asyncHandler(async (req, res) => {
 
 const getAllSessions = asyncHandler(async (req, res) => {
     const userId = req.headers['x-user-id'];
-    const result = await AuthService.getAllSessions(userId as string);
+    const currentSessionId = req.headers['x-session-id'];
+    const result = await AuthService.getAllSessions(userId as string, currentSessionId as string);
 
     res.status(200).json({
         success: true,
