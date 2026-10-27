@@ -5,6 +5,7 @@ import dns from 'node:dns/promises'
 import envConfig from "./config/env";
 import logger from "./utils/logger";
 import { connectRedis } from "@chatapp/common";
+import dbConnect from "./utils/dbConnect";
 
 dns.setServers(['1.1.1.1'])
 
@@ -16,8 +17,9 @@ const port = envConfig.port;
 async function main() {
     try {
         await connectRedis(envConfig.redis_url);
+        await dbConnect()
         server.listen(port, () => {
-            logger.info({ port }, `Auth Service is running on http://localhost:${port}`);
+            logger.info({ port }, `Chat Service is running on http://localhost:${port}`);
         });
     } catch (error) {
         logger.error(error);
