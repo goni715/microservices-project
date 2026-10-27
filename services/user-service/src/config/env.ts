@@ -8,7 +8,7 @@ dotenv.config({ path: path.join(process.cwd(), ".env") });
 //schema validation
 const envValidationSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default('development'),
-    PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4001),
+    PORT: requiredStringSchema('PORT').transform((val) => Number(val)).default(4002),
     USER_DB_URL: requiredStringSchema('USER_DB_URL'),
     CORS_ORIGINS: requiredStringSchema('CORS_ORIGINS'),
     RABBITMQ_URL: requiredStringSchema('RABBITMQ_URL'),
