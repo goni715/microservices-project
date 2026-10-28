@@ -1,8 +1,8 @@
-
 export interface IUser {
     _id: string;
     email: string;
-    fullName: string;
-    createdAt: Date;
-    updatedAt: Date;
+    full_name: string;
+    picture?: string;
+    created_at: Date;
+    updated_at: Date;
 }
