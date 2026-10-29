@@ -19,6 +19,23 @@ services:
       retries: 5
       start_period: 30s
 
+  
+  redis:
+    image: redis:latest
+    container_name: chatapp-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - chatapp-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5 
+
 
   auth-db:
     image: mysql:8.0
@@ -87,5 +104,6 @@ volumes:
   user-db-data:
   mongo-data:
   rabbitmq-data:
+  redis-data:
 networks:
   chatapp-network:
