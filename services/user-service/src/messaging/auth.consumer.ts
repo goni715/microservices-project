@@ -9,6 +9,7 @@ import {
 import logger from "../utils/logger";
 import db from "../db";
 import { users } from "../db/schema";
+import { publishUserCreatedEvent } from "./event.publisher";
 
 let consumerChannel: Channel | null = null;
 
@@ -16,7 +17,6 @@ let consumerChannel: Channel | null = null;
 const USER_REGISTERED_QUEUE = USER_SERVICE_AUTH_EVENTS_QUEUE;
 
 /*initialize RabbitMQ connection, exchange, and queue.*/
-
 export async function initAuthConsumer() {
     if (consumerChannel) {
         return consumerChannel;
@@ -104,6 +104,14 @@ export async function consumeUserRegistered() {
                 full_name: data.full_name,
                 created_at: new Date(data.created_at),
             }).onConflictDoNothing();
+
+            // publish user created event to RabbitMQ
+            await publishUserCreatedEvent({
+                id: data.id,
+                email: data.email,
+                full_name: data.full_name,
+                created_at: new Date(data.created_at).toISOString(),
+            });
 
             consumerChannel?.ack(msg);
             logger.info(`Event consumed: ${AUTH_USER_REGISTERED_ROUTING_KEY}`);

@@ -6,6 +6,7 @@ import envConfig from "./config/env";
 import logger from "./utils/logger";
 import { connectRedis } from "@chatapp/common";
 import dbConnect from "./utils/dbConnect";
+import { initUserConsumer } from "./messaging/user.consumer";
 
 dns.setServers(['1.1.1.1'])
 
@@ -17,6 +18,7 @@ const port = envConfig.port;
 async function main() {
     try {
         await connectRedis(envConfig.redis_url);
+        await initUserConsumer();
         await dbConnect()
         server.listen(port, () => {
             logger.info({ port }, `Chat Service is running on http://localhost:${port}`);
