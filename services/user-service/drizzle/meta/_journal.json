@@ -15,6 +15,13 @@
       "when": 1793242391966,
       "tag": "0001_wet_gravity",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793511132641,
+      "tag": "0002_yummy_dreadnoughts",
+      "breakpoints": true
     }
   ]
 }
