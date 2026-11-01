@@ -7,6 +7,7 @@ export interface UserRegisteredPayload {
     id: string;
     email: string;
     full_name: string;
+    role?: "user" | "super_admin";
     created_at: string;
 }
 

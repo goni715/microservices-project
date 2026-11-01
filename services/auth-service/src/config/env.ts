@@ -29,6 +29,11 @@ const envValidationSchema = z.object({
 
     SESSION_TTL_SECONDS: requiredStringSchema('SESSION_TTL_SECONDS').transform((val) => Number(val)),
     SESSION_TTL_REMEMBER_SECONDS: requiredStringSchema('SESSION_TTL_REMEMBER_SECONDS').transform((val) => Number(val)),
+
+    // Super Admin
+    SUPER_ADMIN_FULL_NAME: requiredStringSchema('SUPER_ADMIN_FULL_NAME'),
+    SUPER_ADMIN_EMAIL: requiredStringSchema('SUPER_ADMIN_EMAIL'),
+    SUPER_ADMIN_PASSWORD: requiredStringSchema('SUPER_ADMIN_PASSWORD'),
 });
 
 // validate process.env against schema
@@ -75,6 +80,11 @@ const envConfig = {
     session: {
         session_ttl_seconds: Number(env.SESSION_TTL_SECONDS),
         session_ttl_remember_seconds: Number(env.SESSION_TTL_REMEMBER_SECONDS),
+    },
+    super_admin: {
+        full_name: env.SUPER_ADMIN_FULL_NAME,
+        email: env.SUPER_ADMIN_EMAIL,
+        password: env.SUPER_ADMIN_PASSWORD,
     }
 };
 

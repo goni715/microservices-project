@@ -102,6 +102,7 @@ export async function consumeUserRegistered() {
                 id: data.id,
                 email: data.email,
                 full_name: data.full_name,
+                role: data.role ?? "user",
                 created_at: new Date(data.created_at),
             }).onConflictDoNothing();
 

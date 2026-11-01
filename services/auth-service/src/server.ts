@@ -7,6 +7,7 @@ import logger from "./utils/logger";
 import { initAuthPublisher } from "./messaging/event.publisher";
 import { closeRabbitMQ } from "./messaging/connection";
 import { connectRedis } from "@chatapp/common";
+import seedSuperAdmin from "./db/seed";
 
 dns.setServers(['1.1.1.1'])
 
@@ -19,6 +20,7 @@ async function main() {
     try {
         await connectRedis(envConfig.redis_url);
         await initAuthPublisher();
+        await seedSuperAdmin();
         server.listen(port, () => {
             logger.info({ port }, `Auth Service is running on http://localhost:${port}`);
         });
