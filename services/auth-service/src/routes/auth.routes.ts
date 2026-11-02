@@ -19,6 +19,12 @@ router.post(
 );
 
 router.post(
+    "/login-admin",
+    validationMiddleware(loginUserValidationSchema),
+    AuthController.loginAdmin,
+);
+
+router.post(
     "/logout",
     AuthController.logout,
 );

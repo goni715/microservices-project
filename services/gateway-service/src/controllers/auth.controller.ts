@@ -11,6 +11,11 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(200).json(response);
 });
 
+const loginAdmin = asyncHandler(async (req, res) => {
+    const response = await AuthProxyService.loginAdmin(req.body);
+    res.status(200).json(response);
+});
+
 const logout = asyncHandler(async (req, res) => {
     const response = await AuthProxyService.logout(req.user);
     res.status(200).json(response);
@@ -36,6 +41,7 @@ const revokeSession = asyncHandler(async (req, res) => {
 const AuthController = {
     registerUser,
     loginUser,
+    loginAdmin,
     logout,
     logoutFromAll,
     getAllSessions,

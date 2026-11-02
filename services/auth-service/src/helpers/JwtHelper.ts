@@ -1,3 +1,4 @@
+import { TUserRole } from "@chatapp/common";
 import jwt, { JwtPayload, Secret, SignOptions } from "jsonwebtoken";
 
 export type TJwtExpiresIn = number | `${number}${"s" | "m" | "h" | "d"}`;
@@ -6,6 +7,7 @@ type TJwtPayload = {
     userId: string;
     email: string;
     sessionId: string;
+    role?: TUserRole;
 };
 
 class JwtHelper {

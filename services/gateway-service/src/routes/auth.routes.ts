@@ -16,6 +16,11 @@ authRouter.post(
 );
 
 authRouter.post(
+    "/login-admin",
+    AuthController.loginAdmin,
+);
+
+authRouter.post(
     "/logout",
     authMiddleware(),
     AuthController.logout,

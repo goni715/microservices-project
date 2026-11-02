@@ -27,6 +27,16 @@ const loginUser = async (payload: ILogin) => {
     }
 };
 
+/*=========== login admin ============*/
+const loginAdmin = async (payload: ILogin) => {
+    try {
+        const response = await client.post('/login-admin', payload, getProxyHeaders());
+        return response.data;
+    } catch (error: any) {
+        throw error;
+    }
+};
+
 /*=========== logout user ============*/
 const logout = async (user?: IAuthUser) => {
     try {
@@ -71,6 +81,7 @@ const revokeSession = async (sessionId: string, user?: IAuthUser) => {
 const AuthProxyService = {
     registerUser,
     loginUser,
+    loginAdmin,
     logout,
     logoutFromAll,
     getAllSessions,

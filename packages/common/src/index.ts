@@ -5,4 +5,5 @@ export * from './schemas';
 export * from './events';
 export * from './redis';
 export * from './constants';
+export * from './interfaces';
 
