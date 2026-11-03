@@ -1,6 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller";
 import authMiddleware from "../middlewares/auth.middleware";
+import { USER_ROLES } from "@chatapp/common";
 
 
 const authRouter = express.Router();
@@ -22,25 +23,25 @@ authRouter.post(
 
 authRouter.post(
     "/logout",
-    authMiddleware(),
+    authMiddleware(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
     AuthController.logout,
 );
 
 authRouter.post(
     "/logout-all",
-    authMiddleware(),
+    authMiddleware(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
     AuthController.logoutFromAll,
 );
 
 authRouter.get(
     "/all-sessions",
-    authMiddleware(),
+    authMiddleware(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
     AuthController.getAllSessions,
 );
 
 authRouter.patch(
     "/revoke-session/:sessionId",
-    authMiddleware(),
+    authMiddleware(USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.USER),
     AuthController.revokeSession,
 );
 

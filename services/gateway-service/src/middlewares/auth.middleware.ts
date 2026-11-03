@@ -1,17 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { Secret } from "jsonwebtoken";
-import { asyncHandler, UnauthorizedError } from "@chatapp/common";
+import { asyncHandler, TUserRole, UnauthorizedError } from "@chatapp/common";
 import envConfig from "../config/env";
 import { verifyToken } from "../helpers/JwtHelper";
 import sessionHelper from "../helpers/SessionHelper";
-
-export type TUserRole = "user" | "super_admin";
 
 export interface IAuthUser {
     userId: string;
     sessionId: string;
     email: string;
-    role?: TUserRole;
+    role: TUserRole;
 }
 
 declare global {
@@ -53,7 +51,7 @@ const authMiddleware = (...roles: TUserRole[]) =>
         const userId = decoded?.userId as string;
         const sessionId = decoded?.sessionId as string;
         const email = decoded?.email as string;
-        //const role = decoded.role;
+        const role = decoded.role;
 
         if (!userId || !sessionId) {
             throw new UnauthorizedError(
@@ -71,21 +69,22 @@ const authMiddleware = (...roles: TUserRole[]) =>
         }
 
         // check user role
-        // if (roles.length > 0 && !roles.includes(role)) {
-        //     throw new UnauthorizedError("You are not authorized.");
-        // }
+        if (roles.length > 0 && !roles.includes(role)) {
+            throw new UnauthorizedError("You are not authorized.");
+        }
 
         // set standard headers for forwarding to downstream microservices
         req.headers["x-user-id"] = userId;
         req.headers["x-session-id"] = sessionId;
         req.headers["x-user-email"] = email;
-        //req.headers["x-user-role"] = role;
+        req.headers["x-user-role"] = role;
 
         // set req.user for internal handler usage
         req.user = {
             userId: userId,
             sessionId,
             email,
+            role
         };
 
         next();
