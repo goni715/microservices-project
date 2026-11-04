@@ -77,6 +77,16 @@ const revokeSession = async (sessionId: string, user?: IAuthUser) => {
     }
 }
 
+/*=========== forgot password send otp ============*/
+const forgotPasswordSendOtp = async (payload: any) => {
+    try {
+        const response = await client.post(`/forgot-password/send-otp`, payload, getProxyHeaders());
+        return response.data;
+    } catch (error: any) {
+        throw error;
+    }
+}
+
 
 const AuthProxyService = {
     registerUser,
@@ -85,7 +95,8 @@ const AuthProxyService = {
     logout,
     logoutFromAll,
     getAllSessions,
-    revokeSession
+    revokeSession,
+    forgotPasswordSendOtp
 };
 
 export default AuthProxyService;

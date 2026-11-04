@@ -37,6 +37,11 @@ const revokeSession = asyncHandler(async (req, res) => {
     res.status(200).json(response);
 });
 
+const forgotPasswordSendOtp = asyncHandler(async (req, res) => {
+    const response = await AuthProxyService.forgotPasswordSendOtp(req.body);
+    res.status(200).json(response);
+});
+
 
 const AuthController = {
     registerUser,
@@ -45,7 +50,8 @@ const AuthController = {
     logout,
     logoutFromAll,
     getAllSessions,
-    revokeSession
+    revokeSession,
+    forgotPasswordSendOtp
 }
 
 export default AuthController;

@@ -86,7 +86,6 @@ const logout = asyncHandler(async (req, res) => {
     });
 })
 
-
 const logoutFromAll = asyncHandler(async (req, res) => {
     const userId = req.headers['x-user-id'];
     const result = await AuthService.logoutFromAll(userId as string);
@@ -105,7 +104,6 @@ const logoutFromAll = asyncHandler(async (req, res) => {
         data: result,
     });
 })
-
 
 const getAllSessions = asyncHandler(async (req, res) => {
     const userId = req.headers['x-user-id'];
@@ -131,6 +129,16 @@ const revokeSession = asyncHandler(async (req, res) => {
     });
 })
 
+const forgotPasswordSendOtp = asyncHandler(async (req, res) => {
+    const result = await AuthService.forgotPasswordSendOtp();
+
+    res.status(200).json({
+        success: true,
+        message: "OTP is sent successfully",
+        data: result,
+    });
+})
+
 
 const AuthController = {
     registerUser,
@@ -139,7 +147,8 @@ const AuthController = {
     logout,
     logoutFromAll,
     getAllSessions,
-    revokeSession
+    revokeSession,
+    forgotPasswordSendOtp
 }
 
 export default AuthController;

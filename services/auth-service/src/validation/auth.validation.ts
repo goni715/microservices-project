@@ -50,3 +50,10 @@ export const revokeSessionValidationSchema = z.object({
         sessionId: uuidSchema('sessionId')
     }),
 });
+
+
+export const forgotPasswordSendOtpValidationSchema = z.object({
+    body: z.object({
+        email: emailZodSchema
+    })
+})

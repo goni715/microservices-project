@@ -45,4 +45,9 @@ authRouter.patch(
     AuthController.revokeSession,
 );
 
+authRouter.post(
+    "/forgot-password/send-otp",
+    AuthController.forgotPasswordSendOtp,
+);
+
 export default authRouter;

@@ -1,7 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/auth.controller";
 import { validationMiddleware } from "@chatapp/common";
-import { loginUserValidationSchema, registerUserValidationSchema, revokeSessionValidationSchema } from "../validation/auth.validation";
+import { forgotPasswordSendOtpValidationSchema, loginUserValidationSchema, registerUserValidationSchema, revokeSessionValidationSchema } from "../validation/auth.validation";
 
 
 const router = express.Router();
@@ -43,6 +43,12 @@ router.patch(
     "/revoke-session/:sessionId",
     validationMiddleware(revokeSessionValidationSchema),
     AuthController.revokeSession,
+);
+
+router.post(
+    "/forgot-password/send-otp",
+    validationMiddleware(forgotPasswordSendOtpValidationSchema),
+    AuthController.forgotPasswordSendOtp,
 );
 
 

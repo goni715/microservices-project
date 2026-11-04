@@ -260,6 +260,11 @@ const revokeSession = async (userId: string, sessionId: string) => {
     return null;
 }
 
+/*=============== forgot password send otp ===============*/
+const forgotPasswordSendOtp = async () => {
+    return "forgot password send otp service";
+}
+
 const AuthService = {
     registerUser,
     loginUser,
@@ -267,7 +272,8 @@ const AuthService = {
     logout,
     logoutFromAll,
     getAllSessions,
-    revokeSession
+    revokeSession,
+    forgotPasswordSendOtp
 }
 
 export default AuthService;
